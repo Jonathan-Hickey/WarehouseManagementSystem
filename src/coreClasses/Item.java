@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import coreClasses.ItemState;
+import sun.awt.AWTAccessor;
 
 
 public class Item{
@@ -16,8 +17,9 @@ public class Item{
 	private Date expriryDate;
 	
 	private String sku;
-	//private String currentState;
-	private ItemState state;
+	
+	private ItemState currentState;
+	private ItemHandler handler;
 	private int assignedUserID;
 	private int xPlacementPoint;
 	
@@ -60,13 +62,52 @@ public class Item{
 			throw new Exception("Cannot convert: " + expriryDate + " to valid date format: \"yyyy-mm-dd\"  ");
 		}
 		
-		this.setCurrentState(ItemState.AWAITING_STOCKER);
-		//this.currentState = "AWAITING_STOCKER";
-
+		// sets the state of a new Item to Awaiting Stocker
+		this.currentState = ItemState.AWAITING_STOCKER;
+		this.handler = setUpChain();
 		this.xPlacementPoint = 0;
 		this.sku = "";
 	}
 	
+	private ItemHandler setUpChain()
+	{
+		ItemAwaitingStockerHandler awaitingStocker = new ItemAwaitingStockerHandler();
+		ItemPendingStockingHandler pending = new ItemPendingStockingHandler();
+		ItemAvailableHandler available = new ItemAvailableHandler();
+		ItemAwaitingPickerHandler awaitingPicker = new ItemAwaitingPickerHandler();
+		ItemAwaitingCheckinHandler checkin =  new ItemAwaitingCheckinHandler();
+		ItemAwaitingPackerHandler packer = new ItemAwaitingPackerHandler();
+		ItemShippedHandler shipping = new ItemShippedHandler();
+		ItemErrorHandler error = new ItemErrorHandler();
+		
+		awaitingStocker.setSuccessor(pending);
+		pending.setSuccessor(available);
+		available.setSuccessor(awaitingPicker);
+		awaitingPicker.setSuccessor(checkin);
+		checkin.setSuccessor(packer);
+		packer.setSuccessor(shipping);
+		shipping.setSuccessor(error);
+		
+		
+		return awaitingStocker;
+	}
+	
+	public ItemState getCurrentState()
+	{
+		return this.currentState;
+	}
+	
+	public void setCurrentState(ItemState newState)
+	{
+		
+		this.currentState = newState;
+	}
+	
+	
+	public void handleRequest(ItemState state)
+	{
+		handler.handleRequest(this, state);
+	}
 	
 	
 	/*public String getCurrentState()
@@ -137,6 +178,7 @@ public class Item{
 	public String getSku() {
 		return sku;
 	}
+	
 	public void setSku(String sku) throws Exception
 	{
 		//Barcode must satisfy EAN-13, UPC-A, EAN-8 or UPC-E standards
@@ -144,16 +186,5 @@ public class Item{
 			throw new Exception("Invalid SKU given. Must satisfy EAN-13, UPC-A, EAN-8 or UPC-E standards");
 		this.sku = sku;
 	}
-
-
-	public ItemState getCurrentState() {
-		return state;
-	}
-
-
-	public void setCurrentState(ItemState state) {
-		this.state = state;
-	}
-	
 	
 }

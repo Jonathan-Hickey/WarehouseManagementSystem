@@ -111,7 +111,6 @@ public class Database implements I_Database {
 		
 		itemIndexer = 17;
 		
-	
 		items.get(0).setCurrentState(ItemState.AWAITING_STOCKER);
 		items.get(1).setCurrentState(ItemState.AWAITING_STOCKER);
 		
@@ -143,6 +142,7 @@ public class Database implements I_Database {
 		items.get(13).setCurrentState(ItemState.PACKED);
 		items.get(14).setCurrentState(ItemState.SHIPPED);
 		items.get(15).setCurrentState(ItemState.SHIPPED);
+		
 		
 		orders = new ArrayList<Order>();
 		ArrayList<Integer> tempOrderList = new ArrayList<Integer>();

@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Product 
 {
-
 	private final int ID;
 	private String name;
 	private String description;

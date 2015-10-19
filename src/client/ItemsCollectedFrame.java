@@ -64,7 +64,7 @@ public class ItemsCollectedFrame extends JFrame {
 		        aListModel.addElement(temp);
 		 }
 		
-		 listOfItemsToBeCollected.setModel(aListModel);
+		listOfItemsToBeCollected.setModel(aListModel);
 		listOfItemsToBeCollected.setBounds(51, 94, 273, 128);
 		
 		contentPane.add(listOfItemsToBeCollected);

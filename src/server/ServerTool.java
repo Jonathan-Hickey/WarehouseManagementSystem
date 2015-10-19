@@ -39,10 +39,12 @@ public class ServerTool implements I_ServerTool
 	{
 		return sectorTools;
 	}
+	
 	public PackagingTool getPackagingTools() 
 	{
 		return packagingTools;
 	}
+	
 	public ReportTool getReportTools() 
 	{
 		return reportTools;
@@ -96,7 +98,7 @@ public class ServerTool implements I_ServerTool
 			//For each of the items we have chosen to use to fulfil the order, put them into the correct sector queue for picker
 			//assignment, update the items state and persist changes in the database.
 			queueItemForPickup(item);
-			item.setCurrentState(ItemState.AWAITING_PICKER);
+			item.handleRequest(ItemState.AWAITING_PICKER);
 			database.updateItem(item);
 			itemIDs.add(item.getID());
 		}
@@ -175,7 +177,7 @@ public class ServerTool implements I_ServerTool
 				generateItemSku(item);
 				item.setAssignedUserID(stocker.getID());
 				stocker.addItem(item);
-				item.setCurrentState(ItemState.PENDING_STOCKING);
+				item.handleRequest(ItemState.PENDING_STOCKING);
 				System.out.println("item placement: " + item.getxPlacementPoint());
 				database.updateItem(item);
 				return true;
@@ -280,7 +282,7 @@ public class ServerTool implements I_ServerTool
 				//Update the database with updated items and assignments
 				pickerItems.remove(i);
 				//Set the ItemState enum to AWAITING_PACKER, denoting it is ready for packing
-				item.setCurrentState(ItemState.AWAITING_PACKER);
+				item.handleRequest(ItemState.AWAITING_PACKER);
 				item.setAssignedUserID(-1);
 				database.updateItem(item);
 				database.updateUser(picker);
@@ -302,7 +304,8 @@ public class ServerTool implements I_ServerTool
 			if(stockerItems.get(i).getID() == item.getID())
 			{
 				stockerItems.remove(i);
-				item.setCurrentState(ItemState.AVAILABLE);
+				item.handleRequest(ItemState.AVAILABLE);
+				//item.setCurrentState(ItemState.AVAILABLE);
 				item.setAssignedUserID(-1);
 				database.updateItem(item);
 				database.updateUser(stocker);

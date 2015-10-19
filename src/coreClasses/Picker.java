@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 
 
-public class Picker extends User{
+public class Picker extends User {
 
 	private ArrayList<Item> itemBasket;
 	
@@ -23,7 +23,6 @@ public class Picker extends User{
 	{
 		return itemBasket.remove(item);
 	}
-
 	
 	public ArrayList<Item> getItemBasket()
 	{

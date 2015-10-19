@@ -52,7 +52,7 @@ public class SectorTool
 				break;
 			//TODO: Duplication of logic .... needs to be revised
 			tempItem.setAssignedUserID(picker.getID());
-			tempItem.setCurrentState(ItemState.AWAITING_CHECK_IN);
+			tempItem.handleRequest(ItemState.AWAITING_CHECK_IN);
 			picker.addItemToBasket(tempItem);
 			assignedItems.add(tempItem);
 		}
