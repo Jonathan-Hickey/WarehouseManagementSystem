@@ -33,7 +33,6 @@ public interface I_Database {
 	public Item getItem(int itemID);
 	public int itemBelonngsTo(int itemID);
 	public I_Cubby createCubby(int type);
-	public I_Shelf createShelve( int type);
 	public I_Sector createSector(int type);
 	public void deleteItem(int itemID);
 	public void deleteProduct(int productID);

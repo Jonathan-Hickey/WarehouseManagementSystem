@@ -112,6 +112,7 @@ public class Server implements I_Server
 		messageFunctionMap.put("GetItemsForStocker", new Command() {public ServerMessage runCommand(ServerMessage m) {return getItemsForStocker(m);}});
 		messageFunctionMap.put("SearchProduct", new Command() {public ServerMessage runCommand(ServerMessage m) {return searchProducts(m);}});
 		messageFunctionMap.put("MarkItemAsStocked", new Command() {public ServerMessage runCommand(ServerMessage m) {return markItemAsStocked(m);}});
+		messageFunctionMap.put("Test", new Command(){public ServerMessage runCommand(ServerMessage message) {return shelfTest(message);}});
 		//messageFunctionMap.put("SearchProduct", new Command() {public ServerMessage runCommand(ServerMessage m) {return })
 		//For StockItem example: jsonData should be in format : {"items": [{"productID": 0, "manufactureDate": "some_date", "expiryDate": "some_date"}, .....]}
 		//Stock items: Get item info including product ID -> create the product -> find first available cubby to put it in -> return result.
@@ -248,6 +249,15 @@ public class Server implements I_Server
 		return new ServerMessage(message.getMessage()+"Result", result.toString());
 	}
 	
+	private ServerMessage shelfTest(ServerMessage message)
+	{
+		JsonObject j =new JsonObject();
+		I_Shelf test = database.getShelf(1);
+		ArrayList<I_Shelf> tests = new ArrayList<I_Shelf>();
+		tests.add(test);
+		j.add("Shelf", gson.toJsonTree(tests).getAsJsonArray());
+		return new ServerMessage(message.getMessage()+"Result", j.toString());
+	}
 	/** Get all items currently assigned to a stocker*/
 	private ServerMessage getItemsForStocker(ServerMessage message)
 	{
