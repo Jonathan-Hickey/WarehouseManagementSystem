@@ -22,7 +22,7 @@ import java.util.Map;
 
 
 //Needs the server message object
-public class Server implements I_Server
+public class Server extends Thread implements I_Server
 {
 	//Needs more atts, will come up with whats needed during implementation!
 	private ServerTool serverTools;
@@ -39,10 +39,18 @@ public class Server implements I_Server
 		gson = new Gson();
 		setUpSectorTools();
 	}
-	
-	public void runServer() throws IOException
-	{
-		ServerSocket listener = new ServerSocket(9090);
+
+	//run method for threading
+	@Override
+	public void run() {
+		
+		ServerSocket listener = null;
+		try {
+			listener = new ServerSocket(9090);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         try 
         {
             while (true) 
@@ -82,10 +90,18 @@ public class Server implements I_Server
                     socket.close();
                 }
             }
-        }
+        } catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         finally 
         {
-            listener.close();
+            try {
+				listener.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
 	}
 	
@@ -392,5 +408,6 @@ public class Server implements I_Server
 		//We should never encounter this case if a valid user is passed into the function. 
 		return -1;
 	}
+	
 
 }
