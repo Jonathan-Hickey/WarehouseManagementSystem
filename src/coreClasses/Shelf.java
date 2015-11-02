@@ -10,9 +10,18 @@ public class Shelf implements I_Shelf
 	private int width;
 	private int depth;
 	
-
+	//added constructor
+	public Shelf(int id)
+	{
+		this.ID = id;
+		this.height = 200;
+		this.width = 1000;
+		this.depth = 100;
+		
+		cubbies = new ArrayList<Integer>();
+	}
 	
-	protected Shelf(int id, int height, int width, int depth )
+	public Shelf(int id, int height, int width, int depth )
 	{
 		this.ID = id;
 		
@@ -21,29 +30,34 @@ public class Shelf implements I_Shelf
 		this.depth = depth;
 		
 		cubbies = new ArrayList<Integer>();
-
 	}
-
+	
+	@Override
 	public int getHeight() {
 		return height;
 	}
-
+	
+	@Override
 	public void setHeight(int height) {
 		this.height = height;
 	}
-
+	
+	@Override
 	public int getWidth() {
 		return width;
 	}
-
+	
+	@Override
 	public void setWidth(int width) {
 		this.width = width;
 	}
-
+	
+	@Override
 	public int getDepth() {
 		return depth;
 	}
-
+	
+	@Override
 	public void setDepth(int depth) {
 		this.depth = depth;
 	}

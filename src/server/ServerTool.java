@@ -13,12 +13,13 @@ import coreClasses.Stocker;
 import database.I_Database;
 import coreClasses.ItemState;
 
-public class ServerTool implements I_ServerTool
+public class ServerTool extends Thread implements I_ServerTool
 {
 	private ArrayList<SectorTool> sectorTools;
 	private PackagingTool packagingTools;
 	private ReportTool reportTools;
 	private I_Database database;
+	public boolean running = false;  
 	//There must be a better way to distribute the DB. Maybe static ? or something all tools inherit from
 	public ServerTool()
 	{
@@ -357,6 +358,31 @@ public class ServerTool implements I_ServerTool
 	{
 		sectorTools.add(sectorTool);
 	}
+
+	 @Override  
+	  public void run()   
+	  {  
+	    this.running = true;  
+	    System.out.println("Server Tool: This is currently running on a separate thread, " +  
+	        "the id is: " + Thread.currentThread().getId());  
+	      
+	    try   
+	    {  
+	      // this will pause this spawned thread for 5 seconds  
+	      //  (5000 is the number of milliseconds to pause)  
+	      // Also, the Thread.sleep() method throws an InterruptedException  
+	      //  so we must "handle" this possible exception, that's why I've  
+	      //  wrapped the sleep() method with a try/catch block  
+	      Thread.sleep(5000);  
+	    }   
+	    catch (InterruptedException e)   
+	    {  
+	      // As user Bernd points out in the comments section below, you should  
+	      //  never swallow an InterruptedException.  
+	      Thread.currentThread().interrupt();  
+	    }  
+	    this.running = false;  
+	  } 
 	
 	
 	

@@ -7,9 +7,11 @@ import coreClasses.I_Sector;
 import coreClasses.Picker;
 import coreClasses.Item;
 import coreClasses.ItemState;
-public class SectorTool 
+public class SectorTool extends Thread
 {
 	private I_Sector sector;
+	public boolean running = false;  
+	
 	public SectorTool()
 	{
 		sector = null;
@@ -39,6 +41,32 @@ public class SectorTool
 		return sector.getID();
 	}
 	
+
+	 @Override  
+	  public void run()   
+	  {  
+	    this.running = true;  
+	    System.out.println("Sector Tool: This is currently running on a separate thread, " +  
+	        "the id is: " + Thread.currentThread().getId());  
+	      
+	    try   
+	    {  
+	      // this will pause this spawned thread for 5 seconds  
+	      //  (5000 is the number of milliseconds to pause)  
+	      // Also, the Thread.sleep() method throws an InterruptedException  
+	      //  so we must "handle" this possible exception, that's why I've  
+	      //  wrapped the sleep() method with a try/catch block  
+	      Thread.sleep(2000);  
+	    }   
+	    catch (InterruptedException e)   
+	    {  
+	      // As user Bernd points out in the comments section below, you should  
+	      //  never swallow an InterruptedException.  
+	      Thread.currentThread().interrupt();  
+	    }  
+	    this.running = false;  
+	  } 
+
 	public ArrayList<Item> assignItemsForPicker(Picker picker)
 	{
 		//This function requires DB access to set certain variables to maintain state.

@@ -22,7 +22,7 @@ import java.util.Map;
 
 
 //Needs the server message object
-public class Server implements I_Server
+public class Server extends Thread implements I_Server
 {
 	//Needs more atts, will come up with whats needed during implementation!
 	private ServerTool serverTools;
@@ -39,10 +39,21 @@ public class Server implements I_Server
 		gson = new Gson();
 		setUpSectorTools();
 	}
-	
-	public void runServer() throws IOException
-	{
-		ServerSocket listener = new ServerSocket(9090);
+
+	//run method for threading
+	@Override
+	public void run() {
+		
+		System.out.println("Server Thread: This is currently running on a separate thread, " +  
+	            "the id is: " + Thread.currentThread().getId()); 
+		
+		ServerSocket listener = null;
+		try {
+			listener = new ServerSocket(9090);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         try 
         {
             while (true) 
@@ -82,10 +93,18 @@ public class Server implements I_Server
                     socket.close();
                 }
             }
-        }
+        } catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         finally 
         {
-            listener.close();
+            try {
+				listener.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
 	}
 	
@@ -112,6 +131,7 @@ public class Server implements I_Server
 		messageFunctionMap.put("GetItemsForStocker", new Command() {public ServerMessage runCommand(ServerMessage m) {return getItemsForStocker(m);}});
 		messageFunctionMap.put("SearchProduct", new Command() {public ServerMessage runCommand(ServerMessage m) {return searchProducts(m);}});
 		messageFunctionMap.put("MarkItemAsStocked", new Command() {public ServerMessage runCommand(ServerMessage m) {return markItemAsStocked(m);}});
+		messageFunctionMap.put("Test", new Command(){public ServerMessage runCommand(ServerMessage message) {return shelfTest(message);}});
 		//messageFunctionMap.put("SearchProduct", new Command() {public ServerMessage runCommand(ServerMessage m) {return })
 		//For StockItem example: jsonData should be in format : {"items": [{"productID": 0, "manufactureDate": "some_date", "expiryDate": "some_date"}, .....]}
 		//Stock items: Get item info including product ID -> create the product -> find first available cubby to put it in -> return result.
@@ -248,6 +268,15 @@ public class Server implements I_Server
 		return new ServerMessage(message.getMessage()+"Result", result.toString());
 	}
 	
+	private ServerMessage shelfTest(ServerMessage message)
+	{
+		JsonObject j =new JsonObject();
+		I_Shelf test = database.getShelf(1);
+		ArrayList<I_Shelf> tests = new ArrayList<I_Shelf>();
+		tests.add(test);
+		j.add("Shelf", gson.toJsonTree(tests).getAsJsonArray());
+		return new ServerMessage(message.getMessage()+"Result", j.toString());
+	}
 	/** Get all items currently assigned to a stocker*/
 	private ServerMessage getItemsForStocker(ServerMessage message)
 	{
@@ -382,5 +411,6 @@ public class Server implements I_Server
 		//We should never encounter this case if a valid user is passed into the function. 
 		return -1;
 	}
+	
 
 }

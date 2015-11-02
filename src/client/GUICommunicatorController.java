@@ -76,6 +76,12 @@ public class GUICommunicatorController
 			currentSector.addProperty("sector", sectorID);
 	}
 	
+	public void rossTest()
+	{
+		serverResult = communicator.sendServerMessage(new ServerMessage("Test", "", ""));
+		System.out.println(serverResult.getData());
+	}
+	
 	
 	public ArrayList<String> getPickerCurrentBasket()
 	{
