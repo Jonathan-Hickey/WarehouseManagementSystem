@@ -2,7 +2,7 @@ package client;
 
 import java.util.ArrayList;
 
-import servercommunication.AutoSelecter;
+import servercommunication.AutoSelector;
 import servercommunication.ServerCommunicator;
 import servercommunication.ServerMessage;
 
@@ -14,7 +14,7 @@ import com.google.gson.JsonParser;
 
 public class GUICommunicatorController 
 {
-	private AutoSelecter communicatorSelector;
+	private AutoSelector communicatorSelector;
 
 	private ServerMessage serverResult;
 	private JsonObject user;
@@ -25,7 +25,7 @@ public class GUICommunicatorController
 	
 	public GUICommunicatorController() 
 	{
-		communicatorSelector = new AutoSelecter();
+		communicatorSelector = new AutoSelector();
 		gson = new Gson();
 	}
 

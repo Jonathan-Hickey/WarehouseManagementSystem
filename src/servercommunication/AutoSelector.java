@@ -2,20 +2,20 @@ package servercommunication;
 
 import java.util.ArrayList;
 
-public class AutoSelecter {
+public class AutoSelector {
 
 	ArrayList<ServerCommunicator> communictions;
 	private int counter;
 	private int communictionsSize;
 	
-	public AutoSelecter()	{
+	public AutoSelector()	{
 		communictions = new ArrayList<ServerCommunicator>();
 		communictions.add(new ServerCommunicator());
 		counter = 0;
 		communictionsSize = communictions.size();
 	}
 	
-	public AutoSelecter(String endpoint, int port)	{
+	public AutoSelector(String endpoint, int port)	{
 		communictions = new ArrayList<ServerCommunicator>();
 		communictions.add(new ServerCommunicator(endpoint, port));
 		counter = 0;
@@ -73,6 +73,10 @@ public class AutoSelecter {
 	}
 	
 	public ServerCommunicator getServerCommunicator()	{
+		
+		if(communictionsSize == 0){
+			return null;
+		}
 		
 		int index = counter%communictionsSize;
 		counter++;
