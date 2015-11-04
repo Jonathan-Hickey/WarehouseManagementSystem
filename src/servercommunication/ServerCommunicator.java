@@ -62,7 +62,7 @@ public class ServerCommunicator
 		{
 			//URL to the server Selector service
 			setEndpoint("127.0.0.1");
-			setPort(9090);
+			setPort(9091);
 			//TODO: Debug Message, remove before finished version
 			JOptionPane.showMessageDialog(null, "Welcome to the Zeus Client Application, You are connected to the following Server:\nServer Name: " + "Localhost" + "\nIP Address: " + endpoint + "\nPort: " + port, "Zeus Server Connector", 1);
 		}

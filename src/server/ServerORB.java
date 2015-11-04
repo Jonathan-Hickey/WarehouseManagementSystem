@@ -1,21 +1,23 @@
-package servercommunication;
+package server;
 
 import java.util.ArrayList;
 
-public class AutoSelector {
+import servercommunication.ServerCommunicator;
+
+public class ServerORB {
 
 	ArrayList<ServerCommunicator> communictions;
 	private int counter;
 	private int communictionsSize;
 	
-	public AutoSelector()	{
+	public ServerORB()	{
 		communictions = new ArrayList<ServerCommunicator>();
 		communictions.add(new ServerCommunicator());
 		counter = 0;
 		communictionsSize = communictions.size();
 	}
 	
-	public AutoSelector(String endpoint, int port)	{
+	public ServerORB(String endpoint, int port)	{
 		communictions = new ArrayList<ServerCommunicator>();
 		communictions.add(new ServerCommunicator(endpoint, port));
 		counter = 0;
@@ -86,6 +88,4 @@ public class AutoSelector {
 		return communictions.get(index);
 		
 	}
-	
-	
 }
