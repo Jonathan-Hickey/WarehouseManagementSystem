@@ -249,7 +249,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public User createUser(int type, String firstName, String surname, String email, String phone, String password)
+	public synchronized User createUser(int type, String firstName, String surname, String email, String phone, String password)
 	{
 		
 		User temp = userFactory.makeUser(type, userIndexer, firstName, surname, email, phone, password);
@@ -264,7 +264,7 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public boolean isValidLogin(String email, String password) 
+	public synchronized boolean isValidLogin(String email, String password) 
 	{
 		if(email == null && password == null) 
 			return false;
@@ -277,7 +277,7 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public Order registerOrder(ArrayList<Integer> productIDs, String shippingAddress) 
+	public synchronized Order registerOrder(ArrayList<Integer> productIDs, String shippingAddress) 
 	{
 
 		Order order = new Order(orderIndexer, productIDs, shippingAddress);
@@ -292,7 +292,7 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public Order getOrder(int orderID) 
+	public synchronized Order getOrder(int orderID) 
 	{
 		for(Order order : orders)
 			if(order.getID() == orderID)  
@@ -302,7 +302,7 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public Item createItem(int productID, String manufactureDate, String expriryDate) throws Exception
+	public synchronized  Item createItem(int productID, String manufactureDate, String expriryDate) throws Exception
 	{
 		Item item= new Item(productID, itemIndexer, manufactureDate, expriryDate);
 		
@@ -316,7 +316,7 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public Product createProduct(String name, String description, double price, float height, float width, float depth,float weight, int priorityID) 
+	public synchronized Product createProduct(String name, String description, double price, float height, float width, float depth,float weight, int priorityID) 
 	{
 		
 		Product product = new Product(productIndexer, name, description, price, height, width, depth, weight, priorityID);
@@ -331,7 +331,7 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public ArrayList<Order> getOpenOrders()
+	public synchronized ArrayList<Order> getOpenOrders()
 	{
 		
 		ArrayList<Order> tempOrders = new ArrayList<Order>();
@@ -344,13 +344,13 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public ArrayList<Item> getItems() 
+	public synchronized ArrayList<Item> getItems() 
 	{
 		return items;	
 	}
 	
 	@Override
-	public ArrayList<Item> getItems(int productID) 
+	public synchronized ArrayList<Item> getItems(int productID) 
 	{
 		
 		ArrayList<Item> tempItems = new ArrayList<Item>();
@@ -363,13 +363,13 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public ArrayList<Product> getProducts() 
+	public synchronized ArrayList<Product> getProducts() 
 	{
 		return products;
 	}
 	
 	@Override
-	public Product getProduct(int productID) 
+	public synchronized Product getProduct(int productID) 
 	{
 		
 		for(Product product : products)
@@ -381,7 +381,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public Item getItem(int itemID) 
+	public synchronized Item getItem(int itemID) 
 	{
 		
 		for(Item item : items)
@@ -393,7 +393,7 @@ public class Database implements I_Database {
 	
 
 	@Override
-	public int itemBelonngsTo(int itemID)
+	public synchronized int itemBelonngsTo(int itemID)
 	{
 		for(Order order : orders)
 			if(order.hasItem(itemID))
@@ -407,7 +407,7 @@ public class Database implements I_Database {
 
 	
 	@Override
-	public I_Cubby createCubby(int type) 
+	public synchronized I_Cubby createCubby(int type) 
 	{
 		I_Cubby cubby = cubbyFactory.makeCubby(type, cubbyIndexer );
 		
@@ -420,7 +420,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public I_Shelf createShelve( int type) 
+	public synchronized I_Shelf createShelve( int type) 
 	{
 		I_Shelf temp = shelveFactory.makeShelve(type, shelveIndexer);
 		
@@ -434,7 +434,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public I_Sector createSector(int type)
+	public synchronized I_Sector createSector(int type)
 	{
 		I_Sector temp = sectorFactory.makeSector(type, sectorIndexer);
 		
@@ -447,7 +447,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public void deleteItem(int itemID)
+	public synchronized void deleteItem(int itemID)
 	{
 		for(int index = 0; index < items.size(); index++)
 			if(items.get(index).getID() == itemID)
@@ -458,7 +458,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public void deleteProduct(int productID)
+	public synchronized void deleteProduct(int productID)
 	{
 		for(int index = 0; index <products.size(); index++)
 			if(products.get(index).getID() == productID)
@@ -469,7 +469,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public void deleteOrder(int orderID) 
+	public synchronized void deleteOrder(int orderID) 
 	{
 		for(int index = 0; index <orders.size(); index++)
 			if(orders.get(index).getID() == orderID)
@@ -480,13 +480,13 @@ public class Database implements I_Database {
 
 	
 	@Override
-	public I_Priority getPriority(int priorityID)
+	public synchronized I_Priority getPriority(int priorityID)
 	{
 		return new PriorityFactory().makePriority(priorityID);
 	}
 	
 	@Override
-	public void updateProduct(Product product)
+	public  synchronized void updateProduct(Product product)
 	{
 		for(int i = 0; i < products.size(); i++)
 			if(products.equals(product))
@@ -497,7 +497,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public void updateItem(Item item)
+	public synchronized void updateItem(Item item)
 	{
 		for(int i = 0; i < items.size(); i++)
 			if(items.get(i).getID() == item.getID())
@@ -508,12 +508,12 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public ArrayList<I_Sector> getAllSectors()
+	public synchronized ArrayList<I_Sector> getAllSectors()
 	{
 		return sectors;
 	}
 	
-	public void updateOrder(Order order)
+	public synchronized void updateOrder(Order order)
 	{
 		for(int index = 0; index < orders.size(); index++)
 			if(orders.get(index).equals(order))
@@ -524,12 +524,12 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public I_Sector createSector()
+	public  synchronized I_Sector createSector()
 	{
 		return sectorFactory.makeSector(1, sectorIndexer);
 	}
 	
-	public void updateSector(I_Sector sector)
+	public synchronized void updateSector(I_Sector sector)
 	{
 		for(int index = 0; index < sectors.size(); index++)
 			if(sectors.get(index).equals(sector))
@@ -540,7 +540,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public I_Sector getSector(int ID)
+	public synchronized I_Sector getSector(int ID)
 	{
 		for(I_Sector sec : sectors)
 			if(sec.getID() == ID ) 
@@ -551,7 +551,7 @@ public class Database implements I_Database {
 	}
 
 	@Override
-	public I_Cubby itemBelongsToCubby(int itemID )
+	public synchronized I_Cubby itemBelongsToCubby(int itemID )
 	{
 		for(I_Cubby cubby : cubbies)
 			if(cubby.hasItem(itemID)) 
@@ -561,7 +561,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public I_Shelf cubbyBelongsToShelf(int cubbyID)
+	public synchronized I_Shelf cubbyBelongsToShelf(int cubbyID)
 	{
 		for(I_Shelf shelf : shelves)
 			if (shelf.hasCubby(cubbyID))
@@ -571,7 +571,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public I_Sector shelfBelongsToSector(int shelfID)
+	public synchronized I_Sector shelfBelongsToSector(int shelfID)
 	{
 		for(I_Sector sector : sectors)
 			if (sector.hasShelf(shelfID)) 
@@ -581,7 +581,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public User getUser(String email, String password) {
+	public synchronized User getUser(String email, String password) {
 		
 		for(User user : users)
 			if(user.getEmail().equalsIgnoreCase(email) && user.getPassword().equals(password))
@@ -591,7 +591,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public User getUser(int userID) {
+	public synchronized User getUser(int userID) {
 		
 		for(User user : users)
 			if(user.getID() == userID) 
@@ -601,7 +601,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public void updateUser(User user)
+	public synchronized void updateUser(User user)
 	{
 		for(int index = 0; index < users.size(); index++)
 			if(users.get(index).equals(user)) 
@@ -613,7 +613,7 @@ public class Database implements I_Database {
 	
 	//--Not sure if this belongs here
 	@Override
-	public boolean isItemSkuUnique(String sku)
+	public synchronized boolean isItemSkuUnique(String sku)
 	{
 		for(Item item: items)
 		{
@@ -624,7 +624,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public ArrayList<Product> getProducts(String searchTerm)
+	public synchronized ArrayList<Product> getProducts(String searchTerm)
 	{
 		ArrayList<Product> results = new ArrayList<Product>();
 		for(Product product: products)
@@ -636,7 +636,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override 
-	public I_Shelf getShelf(int ID)
+	public synchronized I_Shelf getShelf(int ID)
 	{
 		for(I_Shelf shelf: shelves)
 		{
@@ -647,7 +647,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public I_Cubby getCubby(int ID)
+	public synchronized I_Cubby getCubby(int ID)
 	{
 		for(I_Cubby cubby: cubbies)
 		{
@@ -658,7 +658,7 @@ public class Database implements I_Database {
 	}
 	
 	@Override
-	public void updateCubby(I_Cubby cubby)
+	public synchronized void updateCubby(I_Cubby cubby)
 	{
 		for(int i = 0; i < cubbies.size(); i++)
 			if(cubbies.get(i).equals(cubby)) 

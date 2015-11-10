@@ -1,14 +1,16 @@
-package servercommunication;
+package clientbroker;
 
 import java.util.ArrayList;
 
-public class ClientORB {
+import servercommunication.ServerCommunicator;
+
+public class ClientBroker {
 
 	ArrayList<ServerCommunicator> communictions;
 	private int counter;
 	private int communictionsSize;
 	
-	public ClientORB()	{
+	public ClientBroker()	{
 		communictions = new ArrayList<ServerCommunicator>();
 		communictions.add(new ServerCommunicator("127.0.0.1", 9091));
 		communictions.add(new ServerCommunicator("127.0.0.1", 9092));
@@ -18,7 +20,7 @@ public class ClientORB {
 		communictionsSize = communictions.size();
 	}
 	
-	public ClientORB(String endpoint, int port)	{
+	public ClientBroker(String endpoint, int port)	{
 		communictions = new ArrayList<ServerCommunicator>();
 		communictions.add(new ServerCommunicator(endpoint, port));
 		counter = 0;

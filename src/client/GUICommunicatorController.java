@@ -2,7 +2,6 @@ package client;
 
 import java.util.ArrayList;
 
-import servercommunication.ClientORB;
 import servercommunication.ServerCommunicator;
 import servercommunication.ServerMessage;
 
@@ -12,9 +11,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import clientbroker.ClientBroker;
+
 public class GUICommunicatorController 
 {
-	private ClientORB communicatorSelector;
+	private ClientBroker communicatorSelector;
 
 	private ServerMessage serverResult;
 	private JsonObject user;
@@ -25,7 +26,7 @@ public class GUICommunicatorController
 	
 	public GUICommunicatorController() 
 	{
-		communicatorSelector = new ClientORB();
+		communicatorSelector = new ClientBroker();
 		gson = new Gson();
 	}
 
