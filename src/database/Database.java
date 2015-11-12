@@ -12,7 +12,10 @@ import coreClasses.Order;
 import coreClasses.Picker;
 import coreClasses.Product;
 import coreClasses.SectorFactory;
-import coreClasses.ShelfFactory;
+import coreClasses.Shelf;
+import coreClasses.ShelfLarge;
+import coreClasses.ShelfMedium;
+import coreClasses.ShelfSmall;
 import coreClasses.Stocker;
 import coreClasses.User;
 import coreClasses.PriorityFactory;
@@ -45,7 +48,6 @@ public class Database implements I_Database {
 	private int sectorIndexer;
 	
 	private CubbyFactory cubbyFactory;
-	private ShelfFactory shelveFactory;
 	private SectorFactory sectorFactory;
 	private UserFactory userFactory;
 	
@@ -170,18 +172,24 @@ public class Database implements I_Database {
 		this.cubbyFactory = new CubbyFactory();
 		this.cubbyIndexer = 1;
 		
-		this.shelveFactory = new ShelfFactory();
-		this.shelveIndexer = 1;
+		shelveIndexer = 1;
 		shelves = new ArrayList<I_Shelf>();
-		for(int i = 0; i < 10; i++)
-		{
+		
 			if(shelves == null)
 				System.out.println("Shelves is null");
-			if(shelveFactory == null)
-				System.out.println("factory is null");
-			shelves.add(shelveFactory.makeShelve(1, shelveIndexer));
-			this.shelveIndexer++;
-		}
+			
+
+			for(int j = 0; j < products.size(); j++) 
+			{
+				if(products.get(j).getWidth() > 1000)
+				shelves.add(new ShelfLarge(new Shelf(shelveIndexer)));
+				else if(products.get(j).getWidth() < 1000 || products.get(j).getWidth() > 300)
+					shelves.add(new ShelfMedium(new Shelf(shelveIndexer)));
+				else if(products.get(j).getWidth() > 300)
+					shelves.add(new ShelfSmall(new Shelf(shelveIndexer)));
+				shelveIndexer++;
+			}
+		
 		
 		
 		ArrayList<Integer> tempCubbies;
@@ -418,20 +426,7 @@ public class Database implements I_Database {
 		}
 		return cubby;
 	}
-	
-	@Override
-	public synchronized I_Shelf createShelve( int type) 
-	{
-		I_Shelf temp = shelveFactory.makeShelve(type, shelveIndexer);
-		
-		if(temp != null)
-		{
-			shelveIndexer++;
-			shelves.add(temp);
-		}
-		
-		return temp;
-	}
+
 	
 	@Override
 	public synchronized I_Sector createSector(int type)
@@ -667,5 +662,4 @@ public class Database implements I_Database {
 				break;
 			}
 	}
-
 }

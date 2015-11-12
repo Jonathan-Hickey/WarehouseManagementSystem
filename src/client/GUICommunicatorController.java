@@ -80,6 +80,7 @@ public class GUICommunicatorController
 	}
 	
 	
+	
 	public ArrayList<String> getPickerCurrentBasket()
 	{
 		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("GetItemsForPicker", "" ,user.toString() ));

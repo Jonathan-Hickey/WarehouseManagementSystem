@@ -22,7 +22,9 @@ import java.util.Map;
 
 
 //Needs the server message object
+
 public class Server extends Thread
+
 {
 	//Needs more atts, will come up with whats needed during implementation!
 	private ServerTool serverTools;
@@ -42,7 +44,7 @@ public class Server extends Thread
 		gson = new Gson();
 		setUpSectorTools();
 	}
-	
+
 	@Override
 	public void run()
 	{
@@ -52,11 +54,12 @@ public class Server extends Thread
 		ServerSocket listener = null;
 		try {
 			listener = new ServerSocket(socket);
+
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
         try 
         {
             while (true) 
@@ -130,6 +133,7 @@ public class Server extends Thread
 		messageFunctionMap.put("GetItemsForStocker", new Command() {public ServerMessage runCommand(ServerMessage m) {return getItemsForStocker(m);}});
 		messageFunctionMap.put("SearchProduct", new Command() {public ServerMessage runCommand(ServerMessage m) {return searchProducts(m);}});
 		messageFunctionMap.put("MarkItemAsStocked", new Command() {public ServerMessage runCommand(ServerMessage m) {return markItemAsStocked(m);}});
+		messageFunctionMap.put("Test", new Command(){public ServerMessage runCommand(ServerMessage message) {return shelfTest(message);}});
 		//messageFunctionMap.put("SearchProduct", new Command() {public ServerMessage runCommand(ServerMessage m) {return })
 		//For StockItem example: jsonData should be in format : {"items": [{"productID": 0, "manufactureDate": "some_date", "expiryDate": "some_date"}, .....]}
 		//Stock items: Get item info including product ID -> create the product -> find first available cubby to put it in -> return result.
@@ -274,6 +278,15 @@ public class Server extends Thread
 		return new ServerMessage(message.getMessage()+"Result", result.toString());
 	}
 	
+	private ServerMessage shelfTest(ServerMessage message)
+	{
+		JsonObject j =new JsonObject();
+		I_Shelf test = database.getShelf(1);
+		ArrayList<I_Shelf> tests = new ArrayList<I_Shelf>();
+		tests.add(test);
+		j.add("Shelf", gson.toJsonTree(tests).getAsJsonArray());
+		return new ServerMessage(message.getMessage()+"Result", j.toString());
+	}
 	/** Get all items currently assigned to a stocker*/
 	private ServerMessage getItemsForStocker(ServerMessage message)
 	{
@@ -414,10 +427,11 @@ public class Server extends Thread
 		//We should never encounter this case if a valid user is passed into the function. 
 		return -1;
 	}
-	
+
 	private void printThreadInfo(){
 		System.out.println("Using thread ID: " + this.getId() + "  Port Number: " + socket);
 	}
+
 
 
 }

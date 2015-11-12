@@ -4,10 +4,12 @@ import database.Database;
 import database.I_Database;
 
 
+
 public class RunServer {
 
 	public static void main(String args[])throws Exception  {
 		
+
 		int portOne = 9091;
 		int portTwo = 9092;
 		int portThree = 9093;
@@ -29,6 +31,7 @@ public class RunServer {
 		t2.start();
 		t3.start();
 		t4.start();
+
 	}
 
 }

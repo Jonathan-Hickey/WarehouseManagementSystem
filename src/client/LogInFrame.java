@@ -46,7 +46,6 @@ public class LogInFrame extends JFrame implements ActionListener {
 		
 		logInButton.addActionListener(this);
 		
-		
 	}
 
 	
