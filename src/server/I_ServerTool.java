@@ -1,6 +1,6 @@
 package server;
 
-import coreClasses.Order;
+import coreclasses.Order;
 
 public interface I_ServerTool 
 {

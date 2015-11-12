@@ -2,16 +2,16 @@ package server;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import coreClasses.I_Cubby;
-import coreClasses.I_Sector;
-import coreClasses.I_Shelf;
-import coreClasses.Item;
-import coreClasses.Order;
-import coreClasses.Picker;
-import coreClasses.Product;
-import coreClasses.Stocker;
-import database.I_Database;
-import coreClasses.ItemState;
+import coreclasses.Order;
+import coreclasses.cubby.I_Cubby;
+import coreclasses.database.I_Database;
+import coreclasses.items.Item;
+import coreclasses.items.ItemState;
+import coreclasses.items.Product;
+import coreclasses.sector.I_Sector;
+import coreclasses.shelf.I_Shelf;
+import coreclasses.users.Picker;
+import coreclasses.users.Stocker;
 
 public class ServerTool extends Thread implements I_ServerTool
 {

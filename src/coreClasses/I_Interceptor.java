@@ -1,4 +1,4 @@
-package coreClasses;
+package coreclasses;
 
 public interface I_Interceptor
 {

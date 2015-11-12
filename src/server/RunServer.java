@@ -1,8 +1,8 @@
 package server;
 
 
-import database.Database;
-import database.I_Database;
+import coreclasses.database.Database;
+import coreclasses.database.I_Database;
 
 
 public class RunServer {

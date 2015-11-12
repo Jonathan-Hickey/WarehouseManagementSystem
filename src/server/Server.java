@@ -5,9 +5,18 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import coreClasses.*;
+import coreclasses.*;
+import coreclasses.database.I_Database;
+import coreclasses.items.Item;
+import coreclasses.items.Product;
+import coreclasses.sector.I_Sector;
+import coreclasses.shelf.I_Shelf;
+import coreclasses.users.Manager;
+import coreclasses.users.Packer;
+import coreclasses.users.Picker;
+import coreclasses.users.Stocker;
+import coreclasses.users.User;
 import servercommunication.*;
-import database.I_Database;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

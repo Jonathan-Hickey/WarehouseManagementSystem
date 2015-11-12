@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import coreClasses.User;
-import coreClasses.UserFactory;
-import database.Database;
+import coreclasses.database.Database;
+import coreclasses.users.User;
+import coreclasses.users.UserFactory;
 
 public class GetUserTrue {
 

@@ -1,12 +1,10 @@
 package server;
 import java.util.ArrayList;
 
-
-
-import coreClasses.I_Sector;
-import coreClasses.Picker;
-import coreClasses.Item;
-import coreClasses.ItemState;
+import coreclasses.items.Item;
+import coreclasses.items.ItemState;
+import coreclasses.sector.I_Sector;
+import coreclasses.users.Picker;
 public class SectorTool extends Thread
 {
 	private I_Sector sector;

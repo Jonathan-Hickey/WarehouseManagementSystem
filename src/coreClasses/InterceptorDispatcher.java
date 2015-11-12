@@ -1,9 +1,9 @@
-package coreClasses;
+package coreclasses;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import outOfBandServices.Interceptor;
+import interceptor.Interceptor;
 
 public class InterceptorDispatcher implements I_Interceptor
 {

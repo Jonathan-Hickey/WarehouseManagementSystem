@@ -1,4 +1,4 @@
-package coreClasses;
+package coreclasses;
 import java.util.ArrayList;
 
 public class Order 
