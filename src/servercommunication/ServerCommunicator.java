@@ -61,16 +61,10 @@ public class ServerCommunicator
 		try
 		{
 			//URL to the server Selector service
-			URL serverSelector = new URL("http://localhost");
-			URLConnection connection = serverSelector.openConnection();
-			//Read the JSON returned from the service
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			JsonObject selectedServer = new JsonParser().parse(in.readLine()).getAsJsonObject();
-			//Set the endpoint and port based on data returned from the service
-			setEndpoint(selectedServer.get("endpoint").getAsString());
-			setPort(selectedServer.get("port").getAsInt());
+			setEndpoint("127.0.0.1");
+			setPort(9091);
 			//TODO: Debug Message, remove before finished version
-			JOptionPane.showMessageDialog(null, "Welcome to the Zeus Client Application, You are connected to the following Server:\nServer Name: " + selectedServer.get("server") + "\nIP Address: " + selectedServer.get("endpoint") + "\nPort: " + selectedServer.get("port"), "Zeus Server Connector", 1);
+			JOptionPane.showMessageDialog(null, "Welcome to the Zeus Client Application, You are connected to the following Server:\nServer Name: " + "Localhost" + "\nIP Address: " + endpoint + "\nPort: " + port, "Zeus Server Connector", 1);
 		}
 		catch(Exception e)
 		{

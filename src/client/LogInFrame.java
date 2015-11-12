@@ -53,7 +53,6 @@ public class LogInFrame extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) 
 	{
 		GUICommunicatorController aGCC = GUIManager.getGCC();
-		aGCC.rossTest();
 		
 		if (aGCC != null
 				)

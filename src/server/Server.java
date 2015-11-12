@@ -7,7 +7,6 @@ import java.net.Socket;
 
 import coreClasses.*;
 import servercommunication.*;
-import database.Database;
 import database.I_Database;
 
 import com.google.gson.Gson;
@@ -22,38 +21,44 @@ import java.util.Map;
 
 
 //Needs the server message object
-public class Server extends Thread implements I_Server
+
+public class Server extends Thread
 {
 	//Needs more atts, will come up with whats needed during implementation!
 	private ServerTool serverTools;
 	private Map<String, Command> messageFunctionMap;
 	private I_Database database;
 	private Gson gson;
+	private int socket;
+	
 	//Refactor exception handling.
-	public Server()throws Exception
+	public Server(int socket, I_Database database ) 
 	{
+		this.socket = socket;
 		messageFunctionMap = new HashMap<String, Command>();
 		buildMessageFunctionMap();
-		database = Database.getInstance();
+		this.database = database;
 		serverTools = new ServerTool(database);
 		gson = new Gson();
 		setUpSectorTools();
 	}
 
-	//run method for threading
+	
 	@Override
-	public void run() {
-		
-		System.out.println("Server Thread: This is currently running on a separate thread, " +  
-	            "the id is: " + Thread.currentThread().getId()); 
-		
+	public void run()
+	{
+		System.out.println("Thread starting and listening to port.");
+		System.out.println("Thread ID: " + this.getId());
+		System.out.println("Port Number: " + socket);
 		ServerSocket listener = null;
 		try {
-			listener = new ServerSocket(9090);
+			listener = new ServerSocket(socket);
+
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+
         try 
         {
             while (true) 
@@ -78,10 +83,6 @@ public class Server extends Thread implements I_Server
                 	{
                 		System.out.println("oh oh :( " + e.toString());
                 		e.printStackTrace();
-                	}
-                	finally
-                	{
-                		
                 	}
                 } 
                 catch(Exception e)
@@ -148,6 +149,7 @@ public class Server extends Thread implements I_Server
 	
 	private ServerMessage login(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		boolean isLogin = authenticate(message.getData());
 		result.addProperty("isValid", isLogin);
@@ -163,12 +165,14 @@ public class Server extends Thread implements I_Server
 	
 	private ServerMessage register(ServerMessage message)
 	{
+		printThreadInfo();
 		//This function is faked, in the interest of time
 		return new ServerMessage("Default", "Message");
 	}
 	
 	private ServerMessage assignPickerItems(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Picker.class);
 		if(user == null)
@@ -185,6 +189,7 @@ public class Server extends Thread implements I_Server
 	
 	private ServerMessage processIncomingOrder(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject orderData = new JsonParser().parse(message.getData()).getAsJsonObject();
 		JsonArray jsonArray =  orderData.get("productIDs").getAsJsonArray();
 		ArrayList<Integer> productIDs = new ArrayList<Integer>();
@@ -199,6 +204,7 @@ public class Server extends Thread implements I_Server
 		
 	private ServerMessage getItemsForPicker(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		//This logic is repeating itself.......
 		User user = authenticate(message.getUserData(), Picker.class);
@@ -216,6 +222,7 @@ public class Server extends Thread implements I_Server
 	
 	private ServerMessage markItemAsPicked(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Picker.class);
 		if(user == null)
@@ -241,6 +248,7 @@ public class Server extends Thread implements I_Server
 	/** Searches the database for the given searchTerm, returning information on products that prove to be a positive match*/
 	private ServerMessage searchProducts(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -257,6 +265,7 @@ public class Server extends Thread implements I_Server
 	/** Get all Sector ID's for the current deployment*/
 	private ServerMessage getSectors(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		if(authenticate(message.getUserData(), Picker.class) == null && authenticate(message.getUserData(), Stocker.class) == null)
 		{
@@ -280,6 +289,7 @@ public class Server extends Thread implements I_Server
 	/** Get all items currently assigned to a stocker*/
 	private ServerMessage getItemsForStocker(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -297,6 +307,7 @@ public class Server extends Thread implements I_Server
 	/** Creates a new Item and assigns it for stocking to the given stocker.*/
 	private ServerMessage assignItemsToStocker(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -340,6 +351,7 @@ public class Server extends Thread implements I_Server
 	
 	private ServerMessage markItemAsStocked(ServerMessage message)
 	{
+		printThreadInfo();
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -364,6 +376,7 @@ public class Server extends Thread implements I_Server
 	
 	private boolean authenticate(String userData)
 	{
+		printThreadInfo();
 		//TODO: This function currently has no way of knowing what type of user these credentials should be validated under.
 		//TODO: look into this before submitting this portion of the framework
 		//Convert the userData JSON string in a JsonObject 
@@ -374,6 +387,7 @@ public class Server extends Thread implements I_Server
 	
 	private User authenticate(String userData, Class<?> userType)
 	{
+		printThreadInfo();
 		//Convert the userData JSON string in a JsonObject 
 		JsonObject credentials = new JsonParser().parse(userData).getAsJsonObject();
 		//Return the result of isValidLogin where true denotes a valid set of credentials.
@@ -390,6 +404,7 @@ public class Server extends Thread implements I_Server
 	
 	private int getUserTypeAsInt(User user)
 	{
+		printThreadInfo();
 		//Build a map which will map an Integer with a given user type.
 		Map<Integer, Class<?>> test = new HashMap<Integer, Class<?>>();
 		test.put(1, Picker.class);
@@ -412,5 +427,9 @@ public class Server extends Thread implements I_Server
 		return -1;
 	}
 	
+
+	private void printThreadInfo(){
+		System.out.println("Using thread ID: " + this.getId() + "  Port Number: " + socket);
+	}
 
 }

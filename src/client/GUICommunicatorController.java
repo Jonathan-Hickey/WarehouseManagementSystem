@@ -11,9 +11,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import clientbroker.ClientBroker;
+
 public class GUICommunicatorController 
 {
-	private ServerCommunicator communicator;
+	private ClientBroker communicatorSelector;
+
 	private ServerMessage serverResult;
 	private JsonObject user;
 	private JsonObject currentSector;
@@ -23,7 +26,7 @@ public class GUICommunicatorController
 	
 	public GUICommunicatorController() 
 	{
-		communicator = new ServerCommunicator();
+		communicatorSelector = new ClientBroker();
 		gson = new Gson();
 	}
 
@@ -43,7 +46,7 @@ public class GUICommunicatorController
 		user.addProperty("email", email);
 		user.addProperty("password", password);
 		
-		serverResult = communicator.sendServerMessage(new ServerMessage("Login", user.toString()));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("Login", user.toString()));
 		
 		JsonObject credentials = new JsonParser().parse(serverResult.getData()).getAsJsonObject();
 		
@@ -76,16 +79,11 @@ public class GUICommunicatorController
 			currentSector.addProperty("sector", sectorID);
 	}
 	
-	public void rossTest()
-	{
-		serverResult = communicator.sendServerMessage(new ServerMessage("Test", "", ""));
-		System.out.println(serverResult.getData());
-	}
 	
 	
 	public ArrayList<String> getPickerCurrentBasket()
 	{
-		serverResult = communicator.sendServerMessage(new ServerMessage("GetItemsForPicker", "" ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("GetItemsForPicker", "" ,user.toString() ));
 		
 		ArrayList<String> basket = new ArrayList<String>();
 		
@@ -107,13 +105,13 @@ public class GUICommunicatorController
 	{
 		JsonObject items = new JsonObject();
 		items.add("items", gson.toJsonTree(new int[] {itemID}).getAsJsonArray());
-		serverResult = communicator.sendServerMessage(new ServerMessage("MarkItemAsPicked", items.toString() ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("MarkItemAsPicked", items.toString() ,user.toString() ));
 		
 	}
 	
 	public boolean requestItemsForPickerBasket()
 	{
-		serverResult = communicator.sendServerMessage(new ServerMessage("AssignItemsToPicker", currentSector.toString() ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("AssignItemsToPicker", currentSector.toString() ,user.toString() ));
 		
 		if(serverResult == null)
 			return false;
@@ -124,7 +122,7 @@ public class GUICommunicatorController
 		
 	public ArrayList<String> getStockerCurrentBasket()
 	{
-		serverResult = communicator.sendServerMessage(new ServerMessage("GetItemsForStocker", currentSector.toString() ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("GetItemsForStocker", currentSector.toString() ,user.toString() ));
 		
 		ArrayList<String> basket = new ArrayList<String>();
 		
@@ -149,7 +147,7 @@ public class GUICommunicatorController
 	{
 		ArrayList<Integer> sectors = new ArrayList<Integer>();
 		
-		serverResult = communicator.sendServerMessage(new ServerMessage("GetSectors", "" ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("GetSectors", "" ,user.toString() ));
 		
 		if(serverResult == null)
 			return sectors;
@@ -172,7 +170,7 @@ public class GUICommunicatorController
 		JsonObject obj = new JsonObject();
 		obj.addProperty("searchTerm", product);
 		
-		serverResult = communicator.sendServerMessage(new ServerMessage("SearchProduct", obj.toString() ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("SearchProduct", obj.toString() ,user.toString() ));
 		
 		if(serverResult == null)
 			return null;
@@ -208,7 +206,7 @@ public class GUICommunicatorController
 		
 		obj.add("items", itemInfo);
 		
-		serverResult = communicator.sendServerMessage(new ServerMessage("StockItems", obj.toString() ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("StockItems", obj.toString() ,user.toString() ));
 		
 		if(serverResult == null)
 			return -1;
@@ -230,7 +228,7 @@ public class GUICommunicatorController
 
 		JsonObject items = new JsonObject();
 		items.add("items", gson.toJsonTree(new int[] {itemID}).getAsJsonArray());
-		serverResult = communicator.sendServerMessage(new ServerMessage("MarkItemAsStocked", items.toString() ,user.toString() ));
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("MarkItemAsStocked", items.toString() ,user.toString() ));
 		
 		JsonObject credentials = new JsonParser().parse(serverResult.getData()).getAsJsonObject();
 		
