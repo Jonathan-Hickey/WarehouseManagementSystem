@@ -27,14 +27,18 @@ public class InterceptorDispatcher implements I_Interceptor
 		}
 	}
 
-	protected void notify(InterceptorContext context)
+	public void notify(InterceptorContext context)
 	{
 		this.context = context;
 		String result;
+		
+		System.out.println("interceptor size: " + registeredInterceptors.size());
 
 		for (Interceptor element : registeredInterceptors)
 			if (element.getEvent().equals(this.context.getEvent()))
 			{
+
+				System.out.println("interceptor2");
 				result = element.getClass().getName();
 				element.setMessage(this.context.getMessage());
 

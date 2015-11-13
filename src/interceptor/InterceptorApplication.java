@@ -15,10 +15,6 @@ public class InterceptorApplication {
 		log.setMessage("application");
 		dispatch.register(log);
 
-		ISecurity secure = new ISecurity();
-		secure.setEvent("2");
-		secure.setMessage("application");
-		dispatch.register(secure);
 	}
 
 }
