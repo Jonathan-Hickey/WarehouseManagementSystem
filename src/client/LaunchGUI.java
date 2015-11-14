@@ -1,9 +1,9 @@
 package client;
 import java.awt.EventQueue;
 
-import coreClasses.InterceptorContext;
-import coreClasses.InterceptorDispatcher;
-import outOfBandServices.Interceptor;
+import coreclasses.InterceptorContext;
+import coreclasses.InterceptorDispatcher;
+import interceptor.Interceptor;
 
 public class LaunchGUI {
 
@@ -15,11 +15,6 @@ public class LaunchGUI {
 		InterceptorContext context;
 		InterceptorDispatcher dispatch;
 		
-
-		
-		
-		//GUICommunicatorController GCC = new GUICommunicatorController();
-		
 		EventQueue.invokeLater(new Runnable() 
 		{
 			public void run() 
@@ -28,13 +23,6 @@ public class LaunchGUI {
 			            "the id is: " + Thread.currentThread().getId()); 
 				try 
 				{
-					//LogInFrame frame = new LogInFrame();
-					//frame.setVisible(true);
-					//frame.addGUICommunicationController(GCC);
-					
-					//ItemsCollectedFrame frame = new ItemsCollectedFrame();
-					//frame.setVisible(true);
-					
 					GUIManager.init();
 					
 				} 
