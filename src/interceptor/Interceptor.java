@@ -1,9 +1,8 @@
 package interceptor;
 
-import coreclasses.I_Interceptor;
-import coreclasses.InterceptorContext;
+import servercommunication.InterceptorContext;
 
-public class Interceptor implements I_Interceptor
+public abstract class Interceptor implements I_Interceptor
 {
 	public InterceptorContext context = new InterceptorContext();
 
@@ -32,9 +31,6 @@ public class Interceptor implements I_Interceptor
 	}
 
 	@Override
-	public void takeAction()
-	{
-		// subtypes override
-	}
+	public abstract void takeAction();
 
 }

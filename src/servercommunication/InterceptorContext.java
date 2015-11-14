@@ -1,11 +1,23 @@
-package coreclasses;
+package servercommunication;
 
 public class InterceptorContext
 {
-	private String event, message;
+	private String event;
+	private String message;
 
+	public InterceptorContext(){
+		event = "";
+		message = "";
+	}
+	
+	public InterceptorContext(String event, String message){
+		this.event = event;
+		this.message = message;
+	}
+	
 	public void setEvent(String event)
 	{
+		System.out.println("Event set : " + event);
 		this.event = event;
 	}
 

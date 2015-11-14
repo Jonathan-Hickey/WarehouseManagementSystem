@@ -1,8 +1,10 @@
 package server;
 
 
+import coreclasses.InterceptorDispatcher;
 import coreclasses.database.Database;
 import coreclasses.database.I_Database;
+import interceptor.FactoryDispatcher;
 
 
 public class RunServer {
@@ -16,10 +18,12 @@ public class RunServer {
 		
 		I_Database database = Database.getInstance();
 		
-		Server serverOne =  new Server(portOne,database);
-		Server serverTwo =  new Server(portTwo,database);
-		Server serverThree =  new Server(portThree,database);
-		Server serverFour =  new Server(portFour,database);
+		InterceptorDispatcher dispatcher = FactoryDispatcher.makeDispatcher();
+		
+		Server serverOne =  new Server(portOne,database, dispatcher);
+		Server serverTwo =  new Server(portTwo,database, dispatcher);
+		Server serverThree =  new Server(portThree,database, dispatcher);
+		Server serverFour =  new Server(portFour,database, dispatcher);
 		
 		Thread t1 = new Thread(serverOne);
 		Thread t2 = new Thread(serverTwo);

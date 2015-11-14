@@ -1,9 +1,9 @@
 package client;
 import java.awt.EventQueue;
 
-import coreclasses.InterceptorContext;
 import coreclasses.InterceptorDispatcher;
 import interceptor.Interceptor;
+import servercommunication.InterceptorContext;
 
 public class LaunchGUI {
 
@@ -34,7 +34,7 @@ public class LaunchGUI {
 			}
 		});
 		
-
+/*
 		Interceptor interceptor = new Interceptor();
 		interceptor.setEvent("1");
 		context = new InterceptorContext();
@@ -66,6 +66,7 @@ public class LaunchGUI {
 			else
 				System.out.println(i + "\tnormal operation");
 		}
+		*/
 	}
 
 	// called by context object

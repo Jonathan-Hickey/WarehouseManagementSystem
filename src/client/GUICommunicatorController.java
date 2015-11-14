@@ -45,8 +45,9 @@ public class GUICommunicatorController
 		init();
 		user.addProperty("email", email);
 		user.addProperty("password", password);
-		
-		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(new ServerMessage("Login", user.toString()));
+		ServerMessage message = new ServerMessage("Login", user.toString());
+//		message.setEvent("logging");
+		serverResult = communicatorSelector.getServerCommunicator().sendServerMessage(message);
 		
 		JsonObject credentials = new JsonParser().parse(serverResult.getData()).getAsJsonObject();
 		

@@ -39,9 +39,9 @@ public class Server extends Thread
 	private I_Database database;
 	private Gson gson;
 	private int socket;
-	
+	private InterceptorDispatcher dispatcher;
 	//Refactor exception handling.
-	public Server(int socket, I_Database database ) 
+	public Server(int socket, I_Database database, InterceptorDispatcher dispatcher ) 
 	{
 		this.socket = socket;
 		messageFunctionMap = new HashMap<String, Command>();
@@ -50,6 +50,7 @@ public class Server extends Thread
 		serverTools = new ServerTool(database);
 		gson = new Gson();
 		setUpSectorTools();
+		this.dispatcher = dispatcher;
 	}
 
 	
@@ -79,13 +80,15 @@ public class Server extends Thread
                 	ObjectOutputStream outToServer = new ObjectOutputStream(socket.getOutputStream());
                 	try
                 	{
+                		printThreadInfo();
                 		//Get the ServerMessage object passed from the client
                 		ServerMessage incomingMessage = (ServerMessage) in.readObject();
-                		//Debug Message, remove before shipping
-                		System.out.println("This was sent from client: Message=" + incomingMessage.getMessage() + "," + "Data=" + incomingMessage.getData());
+                		dispatcher.notify(new InterceptorContext("logging", "Incoming message: " + incomingMessage.getMessage() + ": " + incomingMessage.getData() ));
+                		
                 		//Using the command design pattern, we can execute necessary logic in a single call.
                 		ServerMessage outgoingMessage = messageFunctionMap.get(incomingMessage.getMessage()).runCommand(incomingMessage);
                 		//Return the result to the client.
+                		dispatcher.notify(new InterceptorContext("logging", "Outgoing Message: " + outgoingMessage.getMessage() + ": " + outgoingMessage.getData() ));
                 		outToServer.writeObject(outgoingMessage);
                 	}
                 	catch(Exception e)
@@ -158,7 +161,7 @@ public class Server extends Thread
 	
 	private ServerMessage login(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject result = new JsonObject();
 		boolean isLogin = authenticate(message.getData());
 		result.addProperty("isValid", isLogin);
@@ -174,14 +177,13 @@ public class Server extends Thread
 	
 	private ServerMessage register(ServerMessage message)
 	{
-		printThreadInfo();
 		//This function is faked, in the interest of time
 		return new ServerMessage("Default", "Message");
 	}
 	
 	private ServerMessage assignPickerItems(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Picker.class);
 		if(user == null)
@@ -198,7 +200,7 @@ public class Server extends Thread
 	
 	private ServerMessage processIncomingOrder(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject orderData = new JsonParser().parse(message.getData()).getAsJsonObject();
 		JsonArray jsonArray =  orderData.get("productIDs").getAsJsonArray();
 		ArrayList<Integer> productIDs = new ArrayList<Integer>();
@@ -213,7 +215,7 @@ public class Server extends Thread
 		
 	private ServerMessage getItemsForPicker(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject result = new JsonObject();
 		//This logic is repeating itself.......
 		User user = authenticate(message.getUserData(), Picker.class);
@@ -231,7 +233,7 @@ public class Server extends Thread
 	
 	private ServerMessage markItemAsPicked(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Picker.class);
 		if(user == null)
@@ -257,7 +259,7 @@ public class Server extends Thread
 	/** Searches the database for the given searchTerm, returning information on products that prove to be a positive match*/
 	private ServerMessage searchProducts(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -274,7 +276,6 @@ public class Server extends Thread
 	/** Get all Sector ID's for the current deployment*/
 	private ServerMessage getSectors(ServerMessage message)
 	{
-		printThreadInfo();
 		JsonObject result = new JsonObject();
 		if(authenticate(message.getUserData(), Picker.class) == null && authenticate(message.getUserData(), Stocker.class) == null)
 		{
@@ -298,7 +299,7 @@ public class Server extends Thread
 	/** Get all items currently assigned to a stocker*/
 	private ServerMessage getItemsForStocker(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -316,7 +317,6 @@ public class Server extends Thread
 	/** Creates a new Item and assigns it for stocking to the given stocker.*/
 	private ServerMessage assignItemsToStocker(ServerMessage message)
 	{
-		printThreadInfo();
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -338,7 +338,7 @@ public class Server extends Thread
 				if(newItem == null)
 					System.out.println("newItem is null");
 				int sectorID = itemInformation.get("sector").getAsInt();
-				System.out.println(sectorID);
+			
 				I_Sector s  = database.getSector(sectorID);
 				if(s == null)
 					System.out.println("s is null");
@@ -360,7 +360,7 @@ public class Server extends Thread
 	
 	private ServerMessage markItemAsStocked(ServerMessage message)
 	{
-		printThreadInfo();
+
 		JsonObject result = new JsonObject();
 		User user = authenticate(message.getUserData(), Stocker.class);
 		if(user == null)
@@ -385,7 +385,7 @@ public class Server extends Thread
 	
 	private boolean authenticate(String userData)
 	{
-		printThreadInfo();
+
 		//TODO: This function currently has no way of knowing what type of user these credentials should be validated under.
 		//TODO: look into this before submitting this portion of the framework
 		//Convert the userData JSON string in a JsonObject 
@@ -396,7 +396,7 @@ public class Server extends Thread
 	
 	private User authenticate(String userData, Class<?> userType)
 	{
-		printThreadInfo();
+
 		//Convert the userData JSON string in a JsonObject 
 		JsonObject credentials = new JsonParser().parse(userData).getAsJsonObject();
 		//Return the result of isValidLogin where true denotes a valid set of credentials.
@@ -413,7 +413,6 @@ public class Server extends Thread
 	
 	private int getUserTypeAsInt(User user)
 	{
-		printThreadInfo();
 		//Build a map which will map an Integer with a given user type.
 		Map<Integer, Class<?>> test = new HashMap<Integer, Class<?>>();
 		test.put(1, Picker.class);
