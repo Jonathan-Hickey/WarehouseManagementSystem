@@ -110,27 +110,6 @@ public class Item{
 		handler.handleRequest(this, state);
 	}
 	
-	
-	/*public String getCurrentState()
-	{
-		return currentState;
-	}/*
-
-	/*
-	 * Options are:
-	 *  AWAITING_STOCKER
-	 *	PENDING_STOCKING
-	 * 	AVAILABLE
-	 *	AWAITING_PICKER
-	 *	AWAITING_CHECK_IN
-	 *	AWAITING_PACKER
-	 *	PACKED
-	 *	SHIPPED
-	 * 
-	 */
-	/*public void setCurrentState(String currentState) {
-		this.currentState = currentState;
-	}*/
 
 	public int getAssignedUserID() {
 		return assignedUserID;
