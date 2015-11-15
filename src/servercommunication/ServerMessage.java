@@ -2,6 +2,8 @@ package servercommunication;
 
 import java.io.Serializable;
 
+import server.InterceptorContext;
+
 public class ServerMessage extends InterceptorContext implements Serializable 
 {
 	//This object is sent to the server.

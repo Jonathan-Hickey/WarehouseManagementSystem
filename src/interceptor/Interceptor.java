@@ -1,6 +1,6 @@
 package interceptor;
 
-import servercommunication.InterceptorContext;
+import server.InterceptorContext;
 
 public abstract class Interceptor implements I_Interceptor
 {

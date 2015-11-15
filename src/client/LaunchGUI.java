@@ -1,9 +1,9 @@
 package client;
 import java.awt.EventQueue;
 
-import coreclasses.InterceptorDispatcher;
 import interceptor.Interceptor;
-import servercommunication.InterceptorContext;
+import server.InterceptorContext;
+import server.InterceptorDispatcher;
 
 public class LaunchGUI {
 

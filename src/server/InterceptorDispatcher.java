@@ -1,10 +1,9 @@
-package coreclasses;
+package server;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import interceptor.Interceptor;
-import servercommunication.InterceptorContext;
 
 public class InterceptorDispatcher
 {

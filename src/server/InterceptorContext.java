@@ -1,4 +1,4 @@
-package servercommunication;
+package server;
 
 public class InterceptorContext
 {

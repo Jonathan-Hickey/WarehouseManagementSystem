@@ -1,6 +1,6 @@
 package interceptor;
 
-import coreclasses.InterceptorDispatcher;
+import server.InterceptorDispatcher;
 
 public class FactoryDispatcher {
 
