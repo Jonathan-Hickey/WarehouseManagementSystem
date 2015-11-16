@@ -24,16 +24,11 @@ public class RunServer {
 		Server serverThree =  new Server(portThree,database, dispatcher);
 		Server serverFour =  new Server(portFour,database, dispatcher);
 		
-		Thread t1 = new Thread(serverOne);
-		Thread t2 = new Thread(serverTwo);
-		Thread t3 = new Thread(serverThree);
-		Thread t4 = new Thread(serverFour);
+		serverOne.start();
+		serverTwo.start();
+		serverThree.start();
+		serverFour.start();
 		
-		t1.start();
-		t2.start();
-		t3.start();
-		t4.start();
-
 	}
 
 }

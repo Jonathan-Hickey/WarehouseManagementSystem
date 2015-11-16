@@ -53,6 +53,12 @@ public class Database implements I_Database {
 	
 	private static Database databaseInstance = null;
 	
+	private boolean availableCubbyCall;
+	private boolean availableUserCall;
+	private boolean availableItemCall;
+	private boolean availableShelfCall;
+	private boolean availableSectorsCall;
+	
 	public static Database getInstance()
 	{
 		if(databaseInstance==null)
@@ -70,7 +76,12 @@ public class Database implements I_Database {
 	}
 	private Database() throws Exception
 	{
-	
+		availableCubbyCall = true;
+		availableUserCall  = true;
+		availableItemCall  = true;
+		availableShelfCall = true;
+		availableSectorsCall = true;
+		
 		users = new ArrayList<User>();
 		
 		userFactory = new UserFactory();
@@ -236,8 +247,7 @@ public class Database implements I_Database {
 		sectorIndexer++;
 		
 		ArrayList<Integer> tempShelve = new ArrayList<Integer>();
-		//This should all be in its own function ... doing it this way for testing purposes...disgusting
-		//perhaps use automation ? to use server functions to begin population
+
 		sectors.get(0).putItemInQueue(items.get(6));
 		sectors.get(0).putItemInQueue(items.get(7));
 		cubbies.get(0).addItem(items.get(4).getID());
@@ -259,6 +269,19 @@ public class Database implements I_Database {
 	@Override
 	public synchronized User createUser(int type, String firstName, String surname, String email, String phone, String password)
 	{
+		while(!availableUserCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableUserCall = false;
 		
 		User temp = userFactory.makeUser(type, userIndexer, firstName, surname, email, phone, password);
 		
@@ -268,6 +291,8 @@ public class Database implements I_Database {
 			users.add(temp);
 		}
 		
+		availableUserCall = true;
+		notifyAll();
 		return temp;
 	}
 
@@ -417,6 +442,19 @@ public class Database implements I_Database {
 	@Override
 	public synchronized I_Cubby createCubby(int type) 
 	{
+		while(!availableCubbyCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableCubbyCall = false;
 		I_Cubby cubby = cubbyFactory.makeCubby(type, cubbyIndexer );
 		
 		if(cubby != null)
@@ -424,9 +462,44 @@ public class Database implements I_Database {
 			cubbies.add(cubby);
 			cubbyIndexer++;
 		}
+		availableCubbyCall = true;
+		notifyAll();
 		return cubby;
 	}
 	
+
+	@Override
+	public synchronized I_Cubby getCubby(int ID)
+	{
+		while(!availableCubbyCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableCubbyCall = false;
+		
+		for(I_Cubby cubby: cubbies)
+		{
+			if(cubby.getID() == ID)
+			{
+				availableCubbyCall = true;
+				notify();
+				return cubby;
+			}
+		}
+		
+		availableCubbyCall = true;
+		notifyAll();
+		
+		return null;
+	}
 
 	@Override
 	public synchronized I_Sector createSector(int type)
@@ -637,17 +710,6 @@ public class Database implements I_Database {
 		{
 			if(shelf.getID() == ID)
 				return shelf;
-		}
-		return null;
-	}
-	
-	@Override
-	public synchronized I_Cubby getCubby(int ID)
-	{
-		for(I_Cubby cubby: cubbies)
-		{
-			if(cubby.getID() == ID)
-				return cubby;
 		}
 		return null;
 	}

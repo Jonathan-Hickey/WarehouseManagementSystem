@@ -30,7 +30,7 @@ class ILogger extends Interceptor
 		}
 		catch (IOException ioe)
 		{
-			// ignore
+			
 		}
 	}
 }
