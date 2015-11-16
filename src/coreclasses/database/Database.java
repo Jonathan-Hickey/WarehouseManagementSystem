@@ -53,9 +53,11 @@ public class Database implements I_Database {
 	
 	private static Database databaseInstance = null;
 	
+	private boolean availableOrderCall;
 	private boolean availableCubbyCall;
 	private boolean availableUserCall;
 	private boolean availableItemCall;
+	private boolean availableProductCall;
 	private boolean availableShelfCall;
 	private boolean availableSectorsCall;
 	
@@ -81,7 +83,8 @@ public class Database implements I_Database {
 		availableItemCall  = true;
 		availableShelfCall = true;
 		availableSectorsCall = true;
-		
+		availableOrderCall = true;
+		availableProductCall = true;
 		users = new ArrayList<User>();
 		
 		userFactory = new UserFactory();
@@ -299,20 +302,54 @@ public class Database implements I_Database {
 	@Override
 	public synchronized boolean isValidLogin(String email, String password) 
 	{
-		if(email == null && password == null) 
+		if(email == null && password == null)
+		{
 			return false;
+		}
+		
+		while(!availableUserCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableUserCall = false;
 		
 		for(User user: users)
 			if(email.equals(user.getEmail()) && password.equals(user.getPassword())) 
+			{
+				availableUserCall = true;
+				notifyAll();
 				return true;
+			}
 		
+		availableUserCall = true;
+		notifyAll();
 		return false;
 	}
 
 	@Override
 	public synchronized Order registerOrder(ArrayList<Integer> productIDs, String shippingAddress) 
 	{
-
+		while(!availableOrderCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		availableOrderCall = false;
+		
 		Order order = new Order(orderIndexer, productIDs, shippingAddress);
 		
 		if(order != null)
@@ -320,23 +357,56 @@ public class Database implements I_Database {
 			orders.add(order);
 			orderIndexer++;
 		}
-		
+		availableOrderCall = true;
+		notifyAll();
 		return order;
 	}
 
 	@Override
 	public synchronized Order getOrder(int orderID) 
 	{
-		for(Order order : orders)
-			if(order.getID() == orderID)  
-				return order;
+		while(!availableOrderCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		availableOrderCall = false;
 		
+		for(Order order : orders)
+			if(order.getID() == orderID)
+			{
+				availableOrderCall = true;
+				notifyAll();
+				return order;
+			}
+		availableOrderCall = true;
+		notifyAll();
 		return null;
 	}
 
 	@Override
 	public synchronized  Item createItem(int productID, String manufactureDate, String expriryDate) throws Exception
 	{
+		while(!availableItemCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableItemCall = false;
+		
 		Item item= new Item(productID, itemIndexer, manufactureDate, expriryDate);
 		
 		if (item != null)
@@ -345,12 +415,27 @@ public class Database implements I_Database {
 			itemIndexer++;
 		}
 		
+		availableItemCall = true;
+		notifyAll();
 		return item;
 	}
 
 	@Override
 	public synchronized Product createProduct(String name, String description, double price, float height, float width, float depth,float weight, int priorityID) 
 	{
+		while(!availableProductCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableProductCall = false;
 		
 		Product product = new Product(productIndexer, name, description, price, height, width, depth, weight, priorityID);
 		
@@ -360,12 +445,27 @@ public class Database implements I_Database {
 			products.add(product);
 		}
 		
+		availableProductCall = true;
+		notifyAll();
 		return product;
 	}
 
 	@Override
 	public synchronized ArrayList<Order> getOpenOrders()
 	{
+		while(!availableOrderCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableOrderCall = false;
 		
 		ArrayList<Order> tempOrders = new ArrayList<Order>();
 		
@@ -373,18 +473,47 @@ public class Database implements I_Database {
 			if(order.getStatus().equalsIgnoreCase( "OPEN"))
 				tempOrders.add(order);
 		
+		availableOrderCall = true;
+		notifyAll();
 		return tempOrders;
 	}
 
 	@Override
 	public synchronized ArrayList<Item> getItems() 
 	{
+		while(!availableItemCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableItemCall = true;
+		notifyAll();
 		return items;	
 	}
 	
 	@Override
 	public synchronized ArrayList<Item> getItems(int productID) 
 	{
+		while(!availableItemCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableItemCall = false;
 		
 		ArrayList<Item> tempItems = new ArrayList<Item>();
 		
@@ -392,24 +521,58 @@ public class Database implements I_Database {
 			if(item.getProductID() == productID)
 				tempItems.add(item);
 		
+		availableItemCall = true;
+		notifyAll();
 		return tempItems;
 	}
 
 	@Override
 	public synchronized ArrayList<Product> getProducts() 
 	{
+		while(!availableProductCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableProductCall = true;
+		notifyAll();
 		return products;
 	}
 	
 	@Override
 	public synchronized Product getProduct(int productID) 
 	{
+		while(!availableProductCall)
+		{
+			try 
+			{
+				wait();
+			}
+			 catch ( InterruptedException e) 
+			{
+				 	e.printStackTrace();
+			 }
+		}
+		
+		availableProductCall = false;
 		
 		for(Product product : products)
-			if(product.getID() == productID)  
+			if(product.getID() == productID)
+			{
+				availableProductCall = true;
+				notifyAll();
 				return product;
-			
-
+			}
+		
+		availableProductCall = true;
+		notifyAll();
 		return null;
 	}
 	
@@ -504,6 +667,19 @@ public class Database implements I_Database {
 	@Override
 	public synchronized I_Sector createSector(int type)
 	{
+		while(!availableSectorsCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableSectorsCall = false;
 		I_Sector temp = sectorFactory.makeSector(type, sectorIndexer);
 		
 		if(temp != null)
@@ -511,39 +687,101 @@ public class Database implements I_Database {
 			sectorIndexer++;
 			sectors.add(temp);
 		}
+		
+		availableSectorsCall = true;
+		notifyAll();
+		
 		return temp;
 	}
 	
 	@Override
 	public synchronized void deleteItem(int itemID)
 	{
+		while(!availableItemCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableItemCall = false;
+		
 		for(int index = 0; index < items.size(); index++)
 			if(items.get(index).getID() == itemID)
 			{
 				items.remove(index);
+				availableItemCall = true;
+				notifyAll();
 				return;
 			};
+			
+		availableItemCall = true;
+		notifyAll();
 	}
 	
 	@Override
 	public synchronized void deleteProduct(int productID)
 	{
+		while(!availableProductCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableProductCall = false;
+		
 		for(int index = 0; index <products.size(); index++)
 			if(products.get(index).getID() == productID)
 			{
 				products.remove(index);
+				availableProductCall = true;
+				notifyAll();
 				return;
 			};
+			
+		availableProductCall = true;
+		notifyAll();
 	}
 	
 	@Override
 	public synchronized void deleteOrder(int orderID) 
 	{
+		while(!availableOrderCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableOrderCall = false;
+		
 		for(int index = 0; index <orders.size(); index++)
 			if(orders.get(index).getID() == orderID)
 			{
+				availableOrderCall = true;
+				notifyAll();
 				orders.remove(index);
+				return;
 			};
+			
+		availableOrderCall = true;
+		notifyAll();
 	}
 
 	
@@ -556,23 +794,61 @@ public class Database implements I_Database {
 	@Override
 	public  synchronized void updateProduct(Product product)
 	{
+		while(!availableProductCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableProductCall = false;
+		
 		for(int i = 0; i < products.size(); i++)
 			if(products.equals(product))
 			{
 				products.set(i, product);
+				availableProductCall = true;
+				notifyAll();
 				return;
 			};
+			
+		availableProductCall = true;
+		notifyAll();
 	}
 	
 	@Override
 	public synchronized void updateItem(Item item)
 	{
+		while(!availableItemCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableItemCall = false;
+		
 		for(int i = 0; i < items.size(); i++)
 			if(items.get(i).getID() == item.getID())
 			{
 				items.set(i, item);
+				availableItemCall = true;
+				notifyAll();
 				return;
-			};
+			}
+			
+		availableItemCall = true;
+		notifyAll();
 	}
 
 	@Override
@@ -583,12 +859,31 @@ public class Database implements I_Database {
 	
 	public synchronized void updateOrder(Order order)
 	{
+		while(!availableOrderCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableOrderCall = false;
+		
 		for(int index = 0; index < orders.size(); index++)
 			if(orders.get(index).equals(order))
 			{
 				orders.set(index, order);
+				availableOrderCall = true;
+				notifyAll();
 				return;
-			};
+			}
+			
+		availableOrderCall = true;
+		notifyAll();
 	}
 	
 	@Override
@@ -599,84 +894,243 @@ public class Database implements I_Database {
 	
 	public synchronized void updateSector(I_Sector sector)
 	{
+		while(!availableSectorsCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableSectorsCall = false;
+		
 		for(int index = 0; index < sectors.size(); index++)
 			if(sectors.get(index).equals(sector))
 			{
 				sectors.set(index, sector);
+				availableSectorsCall = true;
+				notifyAll();
 				return;
-			};
+			}
+			
+		availableSectorsCall = true;
+		notifyAll();
 	}
 	
 	@Override
 	public synchronized I_Sector getSector(int ID)
 	{
-		for(I_Sector sec : sectors)
-			if(sec.getID() == ID ) 
-				return sec;
-	
+		while(!availableSectorsCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		
+		availableSectorsCall = false;
+		
+		for(I_Sector sec : sectors)
+			if(sec.getID() == ID ){ 
+				availableSectorsCall = true;
+				notifyAll();
+				return sec;
+			}
+	
+		availableSectorsCall = true;
+		notifyAll();
 		return null;
 	}
 
 	@Override
 	public synchronized I_Cubby itemBelongsToCubby(int itemID )
 	{
-		for(I_Cubby cubby : cubbies)
-			if(cubby.hasItem(itemID)) 
-				return cubby;
+		while(!availableCubbyCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		
+		availableCubbyCall = false;
+		
+		for(I_Cubby cubby : cubbies)
+			if(cubby.hasItem(itemID))
+			{
+				availableCubbyCall = true;
+				notifyAll();
+				return cubby;
+			}
+		
+		availableCubbyCall = true;
+		notifyAll();
 		return null;
 	}
 	
 	@Override
 	public synchronized I_Shelf cubbyBelongsToShelf(int cubbyID)
 	{
+		while(!availableShelfCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableShelfCall = false;
+		
 		for(I_Shelf shelf : shelves)
 			if (shelf.hasCubby(cubbyID))
+			{
+				availableShelfCall = true;
+				notifyAll();
 				return shelf;
+			}
 		
+		availableShelfCall = true;
+		notifyAll();
 		return null;
 	}
 	
 	@Override
 	public synchronized I_Sector shelfBelongsToSector(int shelfID)
 	{
-		for(I_Sector sector : sectors)
-			if (sector.hasShelf(shelfID)) 
-				return sector;
+		while(!availableSectorsCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		
+		availableSectorsCall = false;
+		
+		for(I_Sector sector : sectors)
+			if (sector.hasShelf(shelfID))
+			{
+				availableSectorsCall = true;
+				notifyAll();
+				return sector;
+			}
+		
+		availableSectorsCall = true;
+		notifyAll();
 		return null;
 	}
 	
 	@Override
 	public synchronized User getUser(String email, String password) {
 		
+		while(!availableUserCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableUserCall = false;
+		
 		for(User user : users)
 			if(user.getEmail().equalsIgnoreCase(email) && user.getPassword().equals(password))
+			{
+				availableUserCall = true;
+				notifyAll();
 				return user;
+			}
 		
+		availableUserCall = true;
+		notifyAll();
+				
 		return null;
 	}
 	
 	@Override
 	public synchronized User getUser(int userID) {
 		
+		while(!availableUserCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableUserCall = false;
+		
 		for(User user : users)
 			if(user.getID() == userID) 
+			{
+				availableUserCall = true;
+				notifyAll();
 				return user;
+			}
 		
+		availableUserCall = true;
+		notifyAll();
+
 		return null;
 	}
 	
 	@Override
 	public synchronized void updateUser(User user)
 	{
+		while(!availableUserCall)
+		{
+			try
+			{
+				wait();
+			}
+			catch(InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		availableUserCall = false;
+		
 		for(int index = 0; index < users.size(); index++)
 			if(users.get(index).equals(user)) 
 			{
+				
 				users.set(index, user);
+				availableUserCall = true;
+				notifyAll();
 				return;
-			};
+			}
+		availableUserCall = true;
+		notifyAll();
+	
 	}
 	
 	//--Not sure if this belongs here
